@@ -8,8 +8,10 @@ import com.imjustdoom.justdoomapi.dto.out.SimpleAdminProjectDto;
 import com.imjustdoom.justdoomapi.dto.out.SimpleProjectDto;
 import com.imjustdoom.justdoomapi.model.Account;
 import com.imjustdoom.justdoomapi.model.Project;
+import com.imjustdoom.justdoomapi.model.Update;
 import com.imjustdoom.justdoomapi.repository.ProjectRepository;
 import com.imjustdoom.justdoomapi.repository.TokenRepository;
+import com.imjustdoom.justdoomapi.repository.UpdateRepository;
 import com.imjustdoom.justdoomapi.service.AccountService;
 import com.imjustdoom.justdoomapi.util.APIUtil;
 import com.imjustdoom.justdoomapi.util.HtmlUtil;
@@ -20,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,6 +33,7 @@ import java.util.stream.Collectors;
 public class ResourceApiController {
 
     private final ProjectRepository projectRepository;
+    private final UpdateRepository updateRepository;
     private final TokenRepository tokenRepository;
 
     private final AccountService accountService;
@@ -85,7 +90,7 @@ public class ResourceApiController {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("Project not found"));
         }
 
-        return ResponseEntity.ok().body(ProjectDto.create(project.get().getTitle(), project.get().getBlurb(), project.get().getDescription(), project.get().getId()));
+        return ResponseEntity.ok().body(ProjectDto.create(project.get().getTitle(), project.get().getBlurb(), project.get().getDescription(), updateRepository.findAllByProjectId(project.get().getId()), project.get().getId()));
     }
 
     @PostMapping("admin/projects/create")
