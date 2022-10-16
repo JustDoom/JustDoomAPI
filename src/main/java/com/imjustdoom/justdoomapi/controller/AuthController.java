@@ -1,8 +1,8 @@
 package com.imjustdoom.justdoomapi.controller;
 
 import com.imjustdoom.justdoomapi.dto.in.BlogPostDto;
-import com.imjustdoom.justdoomapi.dto.in.Login;
-import com.imjustdoom.justdoomapi.dto.in.Register;
+import com.imjustdoom.justdoomapi.dto.in.LoginDto;
+import com.imjustdoom.justdoomapi.dto.in.RegisterDto;
 import com.imjustdoom.justdoomapi.model.Account;
 import com.imjustdoom.justdoomapi.model.BlogPost;
 import com.imjustdoom.justdoomapi.repository.AccountRepository;
@@ -13,7 +13,6 @@ import com.imjustdoom.justdoomapi.service.AccountService;
 import com.imjustdoom.justdoomapi.util.APIUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,12 +33,12 @@ public class AuthController {
     private final AccountService accountService;
 
     @PostMapping("/auth/login")
-    public ResponseEntity<?> login(@RequestBody Login data, @CookieValue(name = "token", required = false) String token) {
+    public ResponseEntity<?> login(@RequestBody LoginDto data, @CookieValue(name = "token", required = false) String token) {
         return accountService.login(data, token);
     }
 
     @PostMapping("/auth/register")
-    public ResponseEntity<?> register(@RequestBody Register data, @CookieValue(name = "token", required = false) String token) {
+    public ResponseEntity<?> register(@RequestBody RegisterDto data, @CookieValue(name = "token", required = false) String token) {
         return accountService.register(data, token);
     }
 

@@ -10,6 +10,7 @@ import com.imjustdoom.justdoomapi.model.Account;
 import com.imjustdoom.justdoomapi.model.Project;
 import com.imjustdoom.justdoomapi.repository.ProjectRepository;
 import com.imjustdoom.justdoomapi.repository.TokenRepository;
+import com.imjustdoom.justdoomapi.service.AccountService;
 import com.imjustdoom.justdoomapi.util.APIUtil;
 import com.imjustdoom.justdoomapi.util.HtmlUtil;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,8 @@ public class ResourceApiController {
     private final ProjectRepository projectRepository;
     private final TokenRepository tokenRepository;
 
+    private final AccountService accountService;
+
     @GetMapping("projects")
     public ResponseEntity<?> projects() {
         List<SimpleProjectDto> projectDtos = projectRepository.findAllByIsPublic(true).stream().map(blog -> SimpleProjectDto.create(blog.getTitle(), blog.getBlurb(), blog.getId())).collect(Collectors.toList());
@@ -37,13 +40,34 @@ public class ResourceApiController {
     }
 
     @GetMapping("admin/projects")
-    public ResponseEntity<?> projectsAdmin() {
+    public ResponseEntity<?> projectsAdmin(@CookieValue(name = "token", required = false) String token) {
+
+        if (tokenRepository.findByToken(token).isEmpty()) {
+            return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not logged in."));
+        }
+
+        Account account = tokenRepository.findByToken(token).get().getAccount();
+
+        if (!accountService.doesAccountHaveAdminPermission(account)) {
+            return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not an admin"));
+        }
+
         List<SimpleAdminProjectDto> projectDtos = projectRepository.findAll().stream().map(blog -> SimpleAdminProjectDto.create(blog.getTitle(), blog.getBlurb(), blog.isPublic(), blog.getId())).collect(Collectors.toList());
         return ResponseEntity.ok().body(projectDtos);
     }
 
     @GetMapping("admin/projects/{id}")
-    public ResponseEntity<?> projectAdmin(@PathVariable("id") int id) {
+    public ResponseEntity<?> projectAdmin(@CookieValue(name = "token", required = false) String token, @PathVariable("id") int id) {
+
+        if (tokenRepository.findByToken(token).isEmpty()) {
+            return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not logged in."));
+        }
+
+        Account account = tokenRepository.findByToken(token).get().getAccount();
+
+        if (!accountService.doesAccountHaveAdminPermission(account)) {
+            return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not an admin"));
+        }
 
         Optional<Project> project = projectRepository.findById(id);
         if (project.isEmpty()) {
@@ -72,7 +96,7 @@ public class ResourceApiController {
 
         Account account = tokenRepository.findByToken(token).get().getAccount();
 
-        if (!account.getRole().equals("ADMIN")) {
+        if (!accountService.doesAccountHaveAdminPermission(account)) {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not an admin"));
         }
 
@@ -90,7 +114,7 @@ public class ResourceApiController {
 
         Account account = tokenRepository.findByToken(token).get().getAccount();
 
-        if (!account.getRole().equals("ADMIN")) {
+        if (!accountService.doesAccountHaveAdminPermission(account)) {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not an admin"));
         }
 

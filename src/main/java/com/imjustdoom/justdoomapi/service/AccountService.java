@@ -1,7 +1,7 @@
 package com.imjustdoom.justdoomapi.service;
 
-import com.imjustdoom.justdoomapi.dto.in.Login;
-import com.imjustdoom.justdoomapi.dto.in.Register;
+import com.imjustdoom.justdoomapi.dto.in.LoginDto;
+import com.imjustdoom.justdoomapi.dto.in.RegisterDto;
 import com.imjustdoom.justdoomapi.model.Account;
 import com.imjustdoom.justdoomapi.model.Token;
 import com.imjustdoom.justdoomapi.repository.AccountRepository;
@@ -15,7 +15,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -31,20 +30,20 @@ public class AccountService implements UserDetailsService {
         return accountRepository.findByUsernameEqualsIgnoreCase(s).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
-    public ResponseEntity<?> login(Login login, String token) {
+    public ResponseEntity<?> login(LoginDto loginDto, String token) {
         if (token != null && !token.equals("") && !token.equals("undefined")) {
             return ResponseEntity.ok().body("{\"error\": \"You are already logged in, please log out\"}");
         }
 
-        if (login.getName() == null) return ResponseEntity.notFound().build();
+        if (loginDto.getName() == null) return ResponseEntity.notFound().build();
 
-        Optional<Account> account = accountRepository.findByUsernameEqualsIgnoreCase(login.getName());
+        Optional<Account> account = accountRepository.findByUsernameEqualsIgnoreCase(loginDto.getName());
 
         if (account.isEmpty()) {
             return ResponseEntity.ok().body("{\"error\": \"Account not found\"}");
         }
 
-        if (!BCrypt.checkpw(login.getPassword(), account.get().getPassword())) {
+        if (!BCrypt.checkpw(loginDto.getPassword(), account.get().getPassword())) {
             return ResponseEntity.ok().body("{\"error\": \"Incorrect password\"}");
         }
 
@@ -57,28 +56,28 @@ public class AccountService implements UserDetailsService {
         return ResponseEntity.ok().header("Set-Cookie", cookie.toString()).build();
     }
 
-    public ResponseEntity<?> register(Register register, String token) {
+    public ResponseEntity<?> register(RegisterDto registerDto, String token) {
         if (token != null && !token.equals("")) {
             return ResponseEntity.ok().body("{\"error\": \"You are already logged in, please log out\"}");
         }
 
-        if (register.getName() == null) return ResponseEntity.notFound().build();
+        if (registerDto.getName() == null) return ResponseEntity.notFound().build();
 
         // check if already exists
 
-        Optional<Account> checkAccount = accountRepository.findByUsernameEqualsIgnoreCase(register.getName());
+        Optional<Account> checkAccount = accountRepository.findByUsernameEqualsIgnoreCase(registerDto.getName());
 
         if (checkAccount.isPresent()) {
             return ResponseEntity.ok().body("{\"error\": \"Account already exists\"}");
         }
 
-        checkAccount = accountRepository.findByEmailEqualsIgnoreCase(register.getEmail());
+        checkAccount = accountRepository.findByEmailEqualsIgnoreCase(registerDto.getEmail());
 
         if (checkAccount.isPresent()) {
             return ResponseEntity.ok().body("{\"error\": \"Email already exists\"}");
         }
 
-        Account account = new Account(register.getName(), register.getEmail(), this.passwordEncoder.encode(register.getPassword()));
+        Account account = new Account(registerDto.getName(), registerDto.getEmail(), this.passwordEncoder.encode(registerDto.getPassword()));
         accountRepository.save(account);
 
         Token cookieToken = new Token("0.0.0.0", account);
@@ -92,5 +91,9 @@ public class AccountService implements UserDetailsService {
 
     public ResponseEntity<?> logout() {
         return ResponseEntity.ok().header("Set-Cookie", ResponseCookie.from("token", "").path("/").httpOnly(false).maxAge(0).sameSite("None").secure(false).build().toString()).build();
+    }
+
+    public boolean doesAccountHaveAdminPermission(Account account) {
+        return account.getRole().equals("ADMIN");
     }
 }
