@@ -1,6 +1,5 @@
 package com.imjustdoom.justdoomapi.dto.out;
 
-import com.imjustdoom.justdoomapi.model.Account;
 import com.imjustdoom.justdoomapi.model.Update;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
