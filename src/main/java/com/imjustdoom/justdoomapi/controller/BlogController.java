@@ -16,6 +16,7 @@ import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -26,10 +27,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @RestController
+@RequestMapping("/blogs")
 @RequiredArgsConstructor
 public class BlogController {
 
@@ -37,7 +40,7 @@ public class BlogController {
     private final TokenRepository tokenRepository;
     private final BlogRepository blogRepository;
 
-    @GetMapping("blogs")
+    @GetMapping
     public ResponseEntity<?> getBlogs() {
         // TODO: should list newest first
 
@@ -46,7 +49,7 @@ public class BlogController {
         return ResponseEntity.ok().body(blogs);
     }
 
-    @GetMapping("blogs/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getBlog(@PathVariable("id") int id) {
         if (blogRepository.findById(id).isEmpty()) {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("Blog not found"));
@@ -57,6 +60,28 @@ public class BlogController {
         return ResponseEntity.ok().body(BlogDto.create(blog.getTitle(), blog.getBlogPost(), blog.getAccount().getUsername(), blog.getCreated().toString(), blog.getId()));
     }
 
+    @PostMapping("/post-blog")
+    public ResponseEntity<?> post(@RequestHeader Map<String, String> headers, @RequestBody BlogPostDto dto) {
+
+        String token = headers.get("authorization");
+        System.out.printf("Token: %s", token);
+
+        if (tokenRepository.findByToken(token).isEmpty()) {
+            return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not logged in."));
+        }
+
+        Account account = tokenRepository.findByToken(token).get().getAccount();
+
+        if (!account.getRole().equals("ADMIN")) {
+            return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not an admin"));
+        }
+
+        BlogPost blogPost = new BlogPost(dto.getTitle(), dto.getPost(), account);
+        blogRepository.save(blogPost);
+
+        return ResponseEntity.ok().body(APIUtil.createSuccessResponse("Posted blog"));
+    }
+
     @Bean
     public WebMvcConfigurer corsConfigurerBlog() {
         return new WebMvcConfigurer() {
@@ -64,7 +89,7 @@ public class BlogController {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/blogs/**")
                         .allowedOrigins("*")
-                        .allowedMethods("GET");
+                        .allowedMethods("GET", "POST");
             }
         };
     }

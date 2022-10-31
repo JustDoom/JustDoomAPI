@@ -3,11 +3,10 @@ package com.imjustdoom.justdoomapi.controller;
 import com.imjustdoom.justdoomapi.dto.in.UserFromTokenDto;
 import com.imjustdoom.justdoomapi.service.AccountService;
 import lombok.AllArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor

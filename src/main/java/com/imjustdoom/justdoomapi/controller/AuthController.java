@@ -14,14 +14,13 @@ import com.imjustdoom.justdoomapi.util.APIUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@RestController()
+@RestController
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -32,39 +31,19 @@ public class AuthController {
 
     private final AccountService accountService;
 
-    @PostMapping("/auth/login")
+    @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto data, @CookieValue(name = "token", required = false) String token) {
         return accountService.login(data, token);
     }
 
-    @PostMapping("/auth/register")
+    @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterDto data, @CookieValue(name = "token", required = false) String token) {
         return accountService.register(data, token);
     }
 
-    @PostMapping("/auth/logout2")
+    @PostMapping("/logout2")
     public ResponseEntity<?> logout() {
         return accountService.logout();
-    }
-
-    // TODO: move to blog controller
-    @PostMapping("/auth/post-blog")
-    public ResponseEntity<?> post(@CookieValue(name = "token", required = false) String token, @RequestBody BlogPostDto dto) {
-
-        if (tokenRepository.findByToken(token).isEmpty()) {
-            return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not logged in."));
-        }
-
-        Account account = tokenRepository.findByToken(token).get().getAccount();
-
-        if (!account.getRole().equals("ADMIN")) {
-            return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not an admin"));
-        }
-
-        BlogPost blogPost = new BlogPost(dto.getTitle(), dto.getPost(), account);
-        blogRepository.save(blogPost);
-
-        return ResponseEntity.ok().body(APIUtil.createSuccessResponse("Posted blog"));
     }
 
     @Bean
