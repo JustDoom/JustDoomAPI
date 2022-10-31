@@ -15,7 +15,7 @@ public class BlogPost {
     public BlogPost(String title, String blogPost, Account account) {
         this.blogPost = blogPost;
         this.account = account;
-        this.created = LocalDateTime.now();
+        this.created = System.currentTimeMillis();
         this.title = title;
     }
 
@@ -24,7 +24,7 @@ public class BlogPost {
     private int id;
 
     @Column(nullable = false)
-    private LocalDateTime created;
+    private long created;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String blogPost;

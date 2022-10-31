@@ -44,8 +44,8 @@ public class BlogController {
     public ResponseEntity<?> getBlogs() {
         // TODO: should list newest first
 
-        List<SimpleBlogDto> blogs = blogRepository.findAll().stream().map(blog -> SimpleBlogDto.create(blog.getTitle(), blog.getAccount().getUsername(), blog.getCreated().toString(), blog.getId())).collect(Collectors.toList());
-        Collections.reverse(blogRepository.findAll().stream().map(blog -> SimpleBlogDto.create(blog.getTitle(), blog.getAccount().getUsername(), blog.getCreated().toString(), blog.getId())).collect(Collectors.toList()));
+        List<SimpleBlogDto> blogs = blogRepository.findAll().stream().map(blog -> SimpleBlogDto.create(blog.getTitle(), blog.getAccount().getUsername(), blog.getCreated(), blog.getId())).collect(Collectors.toList());
+        Collections.reverse(blogRepository.findAll().stream().map(blog -> SimpleBlogDto.create(blog.getTitle(), blog.getAccount().getUsername(), blog.getCreated(), blog.getId())).collect(Collectors.toList()));
         return ResponseEntity.ok().body(blogs);
     }
 
@@ -57,7 +57,7 @@ public class BlogController {
 
         BlogPost blog = blogRepository.findById(id).get();
 
-        return ResponseEntity.ok().body(BlogDto.create(blog.getTitle(), blog.getBlogPost(), blog.getAccount().getUsername(), blog.getCreated().toString(), blog.getId()));
+        return ResponseEntity.ok().body(BlogDto.create(blog.getTitle(), blog.getBlogPost(), blog.getAccount().getUsername(), blog.getCreated(), blog.getId()));
     }
 
     @PostMapping("/post-blog")
