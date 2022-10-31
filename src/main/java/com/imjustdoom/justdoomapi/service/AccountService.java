@@ -8,6 +8,7 @@ import com.imjustdoom.justdoomapi.model.Token;
 import com.imjustdoom.justdoomapi.repository.AccountRepository;
 import com.imjustdoom.justdoomapi.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -54,7 +55,7 @@ public class AccountService implements UserDetailsService {
         // Try fix httpOnly true maybe
         ResponseCookie cookie = ResponseCookie.from("token", cookieToken.getToken()).path("/").httpOnly(false).maxAge(604800).sameSite("None").secure(false).build();
 
-        return ResponseEntity.ok().header("Set-Cookie", cookie.toString()).build();
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).build();
     }
 
     public ResponseEntity<?> register(RegisterDto registerDto, String token) {

@@ -22,10 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -45,7 +42,9 @@ public class ResourceApiController {
     }
 
     @GetMapping("admin/projects")
-    public ResponseEntity<?> projectsAdmin(@CookieValue(name = "token", required = false) String token) {
+    public ResponseEntity<?> projectsAdmin(@RequestHeader Map<String, String> headers) {
+
+        String token = headers.get("authorization");
 
         if (tokenRepository.findByToken(token).isEmpty()) {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not logged in."));
@@ -62,7 +61,9 @@ public class ResourceApiController {
     }
 
     @GetMapping("admin/projects/{id}")
-    public ResponseEntity<?> projectAdmin(@CookieValue(name = "token", required = false) String token, @PathVariable("id") int id) {
+    public ResponseEntity<?> projectAdmin(@RequestHeader Map<String, String> headers, @PathVariable("id") int id) {
+
+        String token = headers.get("authorization");
 
         if (tokenRepository.findByToken(token).isEmpty()) {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not logged in."));
@@ -94,7 +95,9 @@ public class ResourceApiController {
     }
 
     @PostMapping("admin/projects/create")
-    public ResponseEntity<?> createProject(@CookieValue(name = "token", required = false) String token, @RequestBody ProjectCreationDto dto) {
+    public ResponseEntity<?> createProject(@RequestHeader Map<String, String> headers, @RequestBody ProjectCreationDto dto) {
+        String token = headers.get("authorization");
+
         if (tokenRepository.findByToken(token).isEmpty()) {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not logged in."));
         }
