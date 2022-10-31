@@ -13,16 +13,16 @@ import java.util.List;
 @NoArgsConstructor
 public class Update {
 
-    public Update(String title, String description, String filename, List<String> versions, List<String> software, String version, int downloads, String status, Project project) {
+    public Update(String title, String description, String filename, List<String> versions, List<String> software, String version, String status, Project project) {
         this.description = description;
-        this.uploaded = LocalDateTime.now();
+        this.uploaded = System.currentTimeMillis();
         this.title = title;
         this.project = project;
         this.filename = filename;
         this.versions = versions;
         this.software = software;
         this.version = version;
-        this.downloads = downloads;
+        this.downloads = 0;
         this.status = status;
     }
 
@@ -31,7 +31,7 @@ public class Update {
     private int id;
 
     @Column(nullable = false)
-    private LocalDateTime uploaded;
+    private long uploaded;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;

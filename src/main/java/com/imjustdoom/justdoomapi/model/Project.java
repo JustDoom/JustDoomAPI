@@ -17,7 +17,7 @@ public class Project {
         this.description = description;
         this.blurb = blurb;
         this.account = account;
-        this.created = LocalDateTime.now();
+        this.created = System.currentTimeMillis();
         this.title = title;
         this.isPublic = isPublic;
     }
@@ -27,7 +27,7 @@ public class Project {
     private int id;
 
     @Column(nullable = false)
-    private LocalDateTime created;
+    private long created;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;

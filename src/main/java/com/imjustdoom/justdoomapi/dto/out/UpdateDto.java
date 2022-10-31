@@ -10,11 +10,11 @@ import java.util.List;
 @AllArgsConstructor
 public class UpdateDto {
 
-    public static UpdateDto create(LocalDateTime uploaded, String description, String title, String filename, List<String> versions, List<String> software, String version, int downloads, String status, int id) {
+    public static UpdateDto create(long uploaded, String description, String title, String filename, List<String> versions, List<String> software, String version, int downloads, String status, int id) {
         return new UpdateDto(uploaded, description, title, filename, version, status, versions, software, downloads, id);
     }
 
-    private LocalDateTime uploaded;
+    private long uploaded;
     private String description, title, filename, version, status;
     private List<String> versions, software;
     private int downloads;

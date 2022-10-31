@@ -1,5 +1,7 @@
 package com.imjustdoom.justdoomapi.controller;
 
+import com.google.gson.Gson;
+import com.imjustdoom.justdoomapi.dto.in.ProjectCreateUpdateDto;
 import com.imjustdoom.justdoomapi.dto.in.ProjectCreationDto;
 import com.imjustdoom.justdoomapi.dto.in.ProjectEditDto;
 import com.imjustdoom.justdoomapi.dto.out.AdminProjectDto;
@@ -19,6 +21,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -91,7 +94,7 @@ public class ResourceApiController {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("Project not found"));
         }
 
-        return ResponseEntity.ok().body(ProjectDto.create(project.get().getTitle(), project.get().getBlurb(), project.get().getDescription(), updateRepository.findAllByProjectId(project.get().getId()), project.get().getId()));
+        return ResponseEntity.ok().body(ProjectDto.create(project.get().getTitle(), project.get().getBlurb(), project.get().getDescription(), project.get().getCreated(), updateRepository.findAllByProjectId(project.get().getId()), project.get().getId()));
     }
 
     @PostMapping("admin/projects/create")
@@ -110,6 +113,35 @@ public class ResourceApiController {
 
         Project blogPost = new Project(dto.getTitle(), dto.getDescription(), dto.getBlurb(), dto.isPublic(), account);
         projectRepository.save(blogPost);
+
+        return ResponseEntity.ok().body(APIUtil.createSuccessResponse("Created a new project!"));
+    }
+
+    @PostMapping("admin/projects/{id}/update")
+    public ResponseEntity<?> createProjectUpdate(@PathVariable("id") int id, @RequestHeader Map<String, String> headers, @RequestParam("file") MultipartFile file, @RequestPart("data") String data) {
+
+        System.out.println(file);
+        String token = headers.get("authorization");
+
+        ProjectCreateUpdateDto dto = new Gson().fromJson(data, ProjectCreateUpdateDto.class);
+
+        if (tokenRepository.findByToken(token).isEmpty()) {
+            return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not logged in."));
+        }
+
+        Account account = tokenRepository.findByToken(token).get().getAccount();
+
+        if (!accountService.doesAccountHaveAdminPermission(account)) {
+            return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not an admin"));
+        }
+
+        Optional<Project> project = projectRepository.findById(id);
+        if (project.isEmpty()) {
+            return ResponseEntity.ok().body(APIUtil.createErrorResponse("Project not found"));
+        }
+
+        Update update = new Update(dto.getTitle(), dto.getDescription(), dto.getFilename(), dto.getVersions(), dto.getSoftware(), dto.getVersion(), dto.getStatus(), project.get());
+        updateRepository.save(update);
 
         return ResponseEntity.ok().body(APIUtil.createSuccessResponse("Created a new project!"));
     }
