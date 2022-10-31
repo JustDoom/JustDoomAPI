@@ -2,6 +2,7 @@ package com.imjustdoom.justdoomapi.service;
 
 import com.imjustdoom.justdoomapi.dto.in.LoginDto;
 import com.imjustdoom.justdoomapi.dto.in.RegisterDto;
+import com.imjustdoom.justdoomapi.dto.out.UserDto;
 import com.imjustdoom.justdoomapi.model.Account;
 import com.imjustdoom.justdoomapi.model.Token;
 import com.imjustdoom.justdoomapi.repository.AccountRepository;
@@ -91,6 +92,22 @@ public class AccountService implements UserDetailsService {
 
     public ResponseEntity<?> logout() {
         return ResponseEntity.ok().header("Set-Cookie", ResponseCookie.from("token", "").path("/").httpOnly(false).maxAge(0).sameSite("None").secure(false).build().toString()).build();
+    }
+
+    public ResponseEntity<?> getUserByToken(String token) {
+        if (token == null || token.equals("")) {
+            return ResponseEntity.ok().body("{\"error\": \"Token not specified\"}");
+        }
+
+        Optional<Token> cookieToken = tokenRepository.findByToken(token);
+
+        if (cookieToken.isEmpty()) {
+            return ResponseEntity.ok().body("{\"error\": \"No such account by that token\"}");
+        }
+
+        UserDto userDto = UserDto.create(cookieToken.get().getAccount().getUsername(), cookieToken.get().getAccount().getRole(), cookieToken.get().getAccount().getId());
+
+        return ResponseEntity.ok().body(userDto);
     }
 
     public boolean doesAccountHaveAdminPermission(Account account) {
