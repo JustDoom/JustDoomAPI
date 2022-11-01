@@ -61,10 +61,7 @@ public class BlogController {
     }
 
     @PostMapping("/post-blog")
-    public ResponseEntity<?> post(@RequestHeader Map<String, String> headers, @RequestBody BlogPostDto dto) {
-
-        String token = headers.get("authorization");
-        System.out.printf("Token: %s", token);
+    public ResponseEntity<?> post(@RequestHeader("authorization") String token, @RequestBody BlogPostDto dto) {
 
         if (tokenRepository.findByToken(token).isEmpty()) {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not logged in."));

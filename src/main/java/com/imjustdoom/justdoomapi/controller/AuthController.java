@@ -24,11 +24,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AccountRepository accountRepository;
-    private final TokenRepository tokenRepository;
-    private final BlogRepository blogRepository;
-    private final ProjectRepository projectRepository;
-
     private final AccountService accountService;
 
     @PostMapping("/login")

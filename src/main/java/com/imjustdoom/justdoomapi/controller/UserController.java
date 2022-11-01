@@ -18,18 +18,4 @@ public class UserController {
     public ResponseEntity<?> getUser(@RequestBody UserFromTokenDto dto) {
         return accountService.getUserByToken(dto.getToken());
     }
-
-//    @Bean
-//    public WebMvcConfigurer corsConfigurerUser() {
-//        return new WebMvcConfigurer() {
-//            @Override
-//            public void addCorsMappings(CorsRegistry registry) {
-//                registry.addMapping("/auth/**")
-//                        .allowedOrigins("http://localhost:3000")
-//                        .allowedOriginPatterns("http://localhost:3000")
-//                        .allowCredentials(true)
-//                        .allowedMethods("GET", "POST");
-//            }
-//        };
-//    }
 }

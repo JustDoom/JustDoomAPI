@@ -45,9 +45,7 @@ public class ResourceApiController {
     }
 
     @GetMapping("admin/projects")
-    public ResponseEntity<?> projectsAdmin(@RequestHeader Map<String, String> headers) {
-
-        String token = headers.get("authorization");
+    public ResponseEntity<?> projectsAdmin(@RequestHeader("authorization") String token) {
 
         if (tokenRepository.findByToken(token).isEmpty()) {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not logged in."));
@@ -64,9 +62,7 @@ public class ResourceApiController {
     }
 
     @GetMapping("admin/projects/{id}")
-    public ResponseEntity<?> projectAdmin(@RequestHeader Map<String, String> headers, @PathVariable("id") int id) {
-
-        String token = headers.get("authorization");
+    public ResponseEntity<?> projectAdmin(@RequestHeader("authorization") String token, @PathVariable("id") int id) {
 
         if (tokenRepository.findByToken(token).isEmpty()) {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not logged in."));
@@ -98,8 +94,7 @@ public class ResourceApiController {
     }
 
     @PostMapping("admin/projects/create")
-    public ResponseEntity<?> createProject(@RequestHeader Map<String, String> headers, @RequestBody ProjectCreationDto dto) {
-        String token = headers.get("authorization");
+    public ResponseEntity<?> createProject(@RequestHeader("authorization") String token, @RequestBody ProjectCreationDto dto) {
 
         if (tokenRepository.findByToken(token).isEmpty()) {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not logged in."));
@@ -118,10 +113,7 @@ public class ResourceApiController {
     }
 
     @PostMapping("admin/projects/{id}/update")
-    public ResponseEntity<?> createProjectUpdate(@PathVariable("id") int id, @RequestHeader Map<String, String> headers, @RequestParam("file") MultipartFile file, @RequestPart("data") String data) {
-
-        System.out.println(file);
-        String token = headers.get("authorization");
+    public ResponseEntity<?> createProjectUpdate(@PathVariable("id") int id, @RequestHeader("authorization") String token, @RequestParam("file") MultipartFile file, @RequestPart("data") String data) {
 
         ProjectCreateUpdateDto dto = new Gson().fromJson(data, ProjectCreateUpdateDto.class);
 
