@@ -22,7 +22,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class AccountService implements UserDetailsService {
+public class AuthService implements UserDetailsService {
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenRepository tokenRepository;
@@ -53,7 +53,7 @@ public class AccountService implements UserDetailsService {
         tokenRepository.save(cookieToken);
 
         // Try fix httpOnly true maybe
-        ResponseCookie cookie = ResponseCookie.from("token", cookieToken.getToken()).path("/").httpOnly(false).maxAge(604800).sameSite("None").secure(false).build();
+        ResponseCookie cookie = ResponseCookie.from("token", cookieToken.getToken()).path("/").httpOnly(false).maxAge(604800).sameSite("None").secure(true).domain("imjustdoom.com").build();
 
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).build();
     }
@@ -86,13 +86,13 @@ public class AccountService implements UserDetailsService {
         tokenRepository.save(cookieToken);
 
         // Try fix httpOnly true maybe
-        ResponseCookie cookie = ResponseCookie.from("token", cookieToken.getToken()).path("/").httpOnly(false).maxAge(604800).sameSite("None").secure(false).build();
+        ResponseCookie cookie = ResponseCookie.from("token", cookieToken.getToken()).path("/").httpOnly(false).maxAge(604800).sameSite("None").secure(true).domain("imjustdoom.com").build();
 
         return ResponseEntity.ok().header("Set-Cookie", cookie.toString()).build();
     }
 
     public ResponseEntity<?> logout() {
-        return ResponseEntity.ok().header("Set-Cookie", ResponseCookie.from("token", "").path("/").httpOnly(false).maxAge(0).sameSite("None").secure(false).build().toString()).build();
+        return ResponseEntity.ok().header("Set-Cookie", ResponseCookie.from("token", "").path("/").httpOnly(false).maxAge(0).sameSite("None").secure(true).domain("imjustdoom.com").build().toString()).build();
     }
 
     public ResponseEntity<?> getUserByToken(String token) {
