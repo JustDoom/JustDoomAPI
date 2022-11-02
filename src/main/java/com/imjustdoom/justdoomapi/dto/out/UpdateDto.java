@@ -10,8 +10,8 @@ import java.util.List;
 @AllArgsConstructor
 public class UpdateDto {
 
-    public static UpdateDto create(long uploaded, String description, String title, String filename, List<String> versions, List<String> software, String version, int downloads, String status, int id) {
-        return new UpdateDto(uploaded, description, title, filename, version, status, versions, software, downloads, id);
+    public static UpdateDto create(long uploaded, String description, String title, String filename, List<String> versions, List<String> software, String version, int downloads, String status, int id, String downloadUrl) {
+        return new UpdateDto(uploaded, description, title, filename, version, status, versions, software, downloads, id, downloadUrl);
     }
 
     private long uploaded;
@@ -19,4 +19,5 @@ public class UpdateDto {
     private List<String> versions, software;
     private int downloads;
     private int id;
+    private String downloadUrl;
 }
