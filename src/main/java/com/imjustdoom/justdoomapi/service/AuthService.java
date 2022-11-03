@@ -7,6 +7,7 @@ import com.imjustdoom.justdoomapi.model.Account;
 import com.imjustdoom.justdoomapi.model.Token;
 import com.imjustdoom.justdoomapi.repository.AccountRepository;
 import com.imjustdoom.justdoomapi.repository.TokenRepository;
+import com.imjustdoom.justdoomapi.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -65,6 +66,14 @@ public class AuthService implements UserDetailsService {
 
         if (registerDto.getName() == null) return ResponseEntity.notFound().build();
 
+        if (!ValidationUtil.isUsernameValid(registerDto.getName())) {
+            return ResponseEntity.ok().body("{\"error\": \"Username is invalid\"}");
+        }
+
+        if (!ValidationUtil.isEmailValid(registerDto.getEmail())) {
+            return ResponseEntity.ok().body("{\"error\": \"Email is invalid\"}");
+        }
+
         // check if already exists
 
         Optional<Account> checkAccount = accountRepository.findByUsernameEqualsIgnoreCase(registerDto.getName());
@@ -85,7 +94,6 @@ public class AuthService implements UserDetailsService {
         Token cookieToken = new Token("0.0.0.0", account);
         tokenRepository.save(cookieToken);
 
-        // Try fix httpOnly true maybe
         ResponseCookie cookie = ResponseCookie.from("token", cookieToken.getToken()).path("/").httpOnly(false).maxAge(604800).sameSite("None").secure(true).domain("").build();
 
         return ResponseEntity.ok().header("Set-Cookie", cookie.toString()).build();
