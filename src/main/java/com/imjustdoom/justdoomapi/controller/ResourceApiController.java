@@ -207,7 +207,7 @@ public class ResourceApiController {
     }
 
     @PostMapping("admin/projects/edit")
-    public ResponseEntity<?> editProject(@CookieValue(name = "token", required = false) String token, @RequestBody ProjectEditDto dto) {
+    public ResponseEntity<?> editProject(@RequestHeader("authorization") String token, @RequestBody ProjectEditDto dto) {
         if (tokenRepository.findByToken(token).isEmpty()) {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not logged in."));
         }
@@ -223,12 +223,26 @@ public class ResourceApiController {
         return ResponseEntity.ok().body(APIUtil.createSuccessResponse("Edit the project!"));
     }
 
+
+    // TODO: make this apply to admin pages too without a whole second method
     @Bean
     public WebMvcConfigurer corsConfigurerResourceAPI() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/projects/**")
+                        .allowedOrigins("*")
+                        .allowedMethods("GET", "POST");
+            }
+        };
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurerResourceAPI2() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/admin/projects/**")
                         .allowedOrigins("*")
                         .allowedMethods("GET", "POST");
             }
