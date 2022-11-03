@@ -53,7 +53,7 @@ public class AuthService implements UserDetailsService {
         tokenRepository.save(cookieToken);
 
         // Try fix httpOnly true maybe
-        ResponseCookie cookie = ResponseCookie.from("token", cookieToken.getToken()).path("/").httpOnly(false).maxAge(604800).sameSite("None").secure(true).domain("imjustdoom.com").build();
+        ResponseCookie cookie = ResponseCookie.from("token", cookieToken.getToken()).path("/").httpOnly(false).maxAge(604800).sameSite("None").secure(true).domain("").build();
 
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).build();
     }
@@ -86,13 +86,13 @@ public class AuthService implements UserDetailsService {
         tokenRepository.save(cookieToken);
 
         // Try fix httpOnly true maybe
-        ResponseCookie cookie = ResponseCookie.from("token", cookieToken.getToken()).path("/").httpOnly(false).maxAge(604800).sameSite("None").secure(true).domain("imjustdoom.com").build();
+        ResponseCookie cookie = ResponseCookie.from("token", cookieToken.getToken()).path("/").httpOnly(false).maxAge(604800).sameSite("None").secure(true).domain("").build();
 
         return ResponseEntity.ok().header("Set-Cookie", cookie.toString()).build();
     }
 
     public ResponseEntity<?> logout() {
-        return ResponseEntity.ok().header("Set-Cookie", ResponseCookie.from("token", "").path("/").httpOnly(false).maxAge(0).sameSite("None").secure(true).domain("imjustdoom.com").build().toString()).build();
+        return ResponseEntity.ok().header("Set-Cookie", ResponseCookie.from("token", "").path("/").httpOnly(false).maxAge(0).sameSite("None").secure(true).domain("").build().toString()).build();
     }
 
     public ResponseEntity<?> getUserByToken(String token) {
