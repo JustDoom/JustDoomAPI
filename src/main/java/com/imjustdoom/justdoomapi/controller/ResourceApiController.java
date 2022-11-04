@@ -38,6 +38,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping("/projects")
 @AllArgsConstructor
 public class ResourceApiController {
 
@@ -54,13 +55,13 @@ public class ResourceApiController {
     //  Projects
     //
 
-    @GetMapping("projects")
+    @GetMapping
     public ResponseEntity<?> projects() {
         List<SimpleProjectDto> projectDtos = projectRepository.findAllByIsPublic(true).stream().map(blog -> SimpleProjectDto.create(blog.getTitle(), blog.getBlurb(), blog.getId())).collect(Collectors.toList());
         return ResponseEntity.ok().body(projectDtos);
     }
 
-    @GetMapping("projects/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<?> project(@PathVariable("id") int id) {
 
         Optional<Project> project = projectRepository.findById(id);
@@ -71,7 +72,7 @@ public class ResourceApiController {
         return ResponseEntity.ok().body(ProjectDto.create(project.get().getTitle(), project.get().getBlurb(), project.get().getDescription(), project.get().getCreated(), updateRepository.findAllByProjectId(project.get().getId()), project.get().getId()));
     }
 
-    @GetMapping("projects/{id}/updates/{updateId}/download")
+    @GetMapping("{id}/updates/{updateId}/download")
     public ResponseEntity<?> downloadUpdate(@PathVariable("id") int id, @PathVariable("updateId") int updateId) {
 
         Optional<Project> project = projectRepository.findById(id);
@@ -134,7 +135,7 @@ public class ResourceApiController {
         return ResponseEntity.ok().body(AdminProjectDto.create(project.get().getTitle(), project.get().getBlurb(), project.get().getDescription(), project.get().isPublic(), project.get().getId()));
     }
 
-    @PostMapping("admin/projects/create")
+    @PostMapping("create")
     public ResponseEntity<?> createProject(@RequestHeader("authorization") String token, @RequestBody ProjectCreationDto dto) {
 
         if (tokenRepository.findByToken(token).isEmpty()) {

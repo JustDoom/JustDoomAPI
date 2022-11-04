@@ -47,7 +47,7 @@ public class BlogController {
         return ResponseEntity.ok().body(BlogDto.create(blog.getTitle(), blog.getBlogPost(), blog.getAccount().getUsername(), blog.getCreated(), blog.getId()));
     }
 
-    @PostMapping("/post-blog")
+    @PostMapping("/create")
     public ResponseEntity<?> post(@RequestHeader("authorization") String token, @RequestBody BlogPostDto dto) {
 
         if (tokenRepository.findByToken(token).isEmpty()) {
