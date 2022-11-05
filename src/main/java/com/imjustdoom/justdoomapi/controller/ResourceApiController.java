@@ -154,7 +154,7 @@ public class ResourceApiController {
         return ResponseEntity.ok().body(APIUtil.createSuccessResponse("Created a new project!"));
     }
 
-    @PostMapping("admin/projects/{id}/update")
+    @PostMapping("{id}/update")
     public ResponseEntity<?> createProjectUpdate(@PathVariable("id") int id, @RequestHeader("authorization") String token, @RequestParam("file") MultipartFile file, @RequestPart("data") String data) {
 
         ProjectCreateUpdateDto dto = new Gson().fromJson(data, ProjectCreateUpdateDto.class);
