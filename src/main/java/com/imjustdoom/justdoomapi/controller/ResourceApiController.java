@@ -237,16 +237,4 @@ public class ResourceApiController {
             }
         };
     }
-
-    @Bean
-    public WebMvcConfigurer corsConfigurerResourceAPI2() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/admin/projects/**")
-                        .allowedOrigins("*")
-                        .allowedMethods("GET", "POST");
-            }
-        };
-    }
 }
