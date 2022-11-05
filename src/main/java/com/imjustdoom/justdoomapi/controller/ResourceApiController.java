@@ -207,7 +207,7 @@ public class ResourceApiController {
         return ResponseEntity.ok().body(APIUtil.createSuccessResponse("Created a new project!"));
     }
 
-    @PostMapping("admin/projects/edit")
+    @PostMapping("{id}/edit")
     public ResponseEntity<?> editProject(@RequestHeader("authorization") String token, @RequestBody ProjectEditDto dto) {
         if (tokenRepository.findByToken(token).isEmpty()) {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not logged in."));
