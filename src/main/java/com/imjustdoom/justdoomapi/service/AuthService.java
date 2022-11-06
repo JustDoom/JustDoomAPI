@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -57,6 +58,10 @@ public class AuthService implements UserDetailsService {
         ResponseCookie cookie = ResponseCookie.from("token", cookieToken.getToken()).path("/").httpOnly(false).maxAge(604800).sameSite("None").secure(true).domain("").build();
 
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).build();
+    }
+
+    public boolean isUsernameValid(String username) {
+        return Pattern.matches("[^a-zA-Z0-9_]", username);
     }
 
     public ResponseEntity<?> register(RegisterDto registerDto, String token) {
