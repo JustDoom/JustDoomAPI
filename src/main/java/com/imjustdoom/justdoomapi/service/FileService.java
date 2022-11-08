@@ -26,9 +26,7 @@ public class FileService {
         if (optionalUpdate.isEmpty()) return null;//throw new RestException(RestErrorCode.RESOURCE_UPDATE_NOT_FOUND);
         Update update = optionalUpdate.get();
 
-        return config.getBackendUrl() + "/" + updateId + "/" + update.getFilename();
-
-        //return new FileReturn(path.toFile(), file.getFilename());
+        return config.getStorageUrl() + "/" + updateId + "/" + update.getFilename();
     }
 
     public record FileReturn(java.io.File file, String realName) {}
