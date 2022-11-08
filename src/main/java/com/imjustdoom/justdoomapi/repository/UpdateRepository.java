@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UpdateRepository extends JpaRepository<Update, Integer> {
@@ -14,5 +15,5 @@ public interface UpdateRepository extends JpaRepository<Update, Integer> {
     List<Update> findAllByProjectIdAndStatus(int id, String status);
 
     // Get last updated update
-    Update findFirstByProjectIdOrderByUploadedDesc(int id);
+    Optional<Update> findFirstByProjectIdOrderByUploadedDesc(int id);
 }

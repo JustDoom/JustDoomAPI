@@ -58,8 +58,8 @@ public class ResourceApiController {
     @GetMapping
     public ResponseEntity<?> projects() {
         List<SimpleProjectDto> projectDtos = projectRepository.findAllByIsPublic(true).stream().map(blog -> {
-            Update latestUpdate = updateRepository.findFirstByProjectIdOrderByUploadedDesc(blog.getId());
-            return SimpleProjectDto.create(blog.getTitle(), blog.getBlurb(), latestUpdate.getUploaded(), blog.getId());
+            Optional<Update> latestUpdate = updateRepository.findFirstByProjectIdOrderByUploadedDesc(blog.getId());
+            return SimpleProjectDto.create(blog.getTitle(), blog.getBlurb(), latestUpdate.isEmpty() ? -1 : latestUpdate.get().getUploaded(), blog.getId());
         }).collect(Collectors.toList());
         return ResponseEntity.ok().body(projectDtos);
     }
