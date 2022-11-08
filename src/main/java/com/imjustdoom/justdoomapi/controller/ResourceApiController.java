@@ -5,10 +5,7 @@ import com.imjustdoom.justdoomapi.config.APIConfig;
 import com.imjustdoom.justdoomapi.dto.in.ProjectCreateUpdateDto;
 import com.imjustdoom.justdoomapi.dto.in.ProjectCreationDto;
 import com.imjustdoom.justdoomapi.dto.in.ProjectEditDto;
-import com.imjustdoom.justdoomapi.dto.out.AdminProjectDto;
-import com.imjustdoom.justdoomapi.dto.out.ProjectDto;
-import com.imjustdoom.justdoomapi.dto.out.SimpleAdminProjectDto;
-import com.imjustdoom.justdoomapi.dto.out.SimpleProjectDto;
+import com.imjustdoom.justdoomapi.dto.out.*;
 import com.imjustdoom.justdoomapi.model.Account;
 import com.imjustdoom.justdoomapi.model.Project;
 import com.imjustdoom.justdoomapi.model.Update;
@@ -94,6 +91,42 @@ public class ResourceApiController {
         }
 
         return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(link)).build();
+    }
+
+    @GetMapping("{id}/title")
+    public ResponseEntity<?> projectName(@PathVariable("id") int id) {
+        Optional<Project> projectOptional = projectRepository.findById(id);
+
+        if (projectOptional.isEmpty()) {
+            return ResponseEntity.ok().body(APIUtil.createErrorResponse("Project not found"));
+        }
+
+        return ResponseEntity.ok().body(ProjectNameDto.create(projectOptional.get().getTitle()));
+    }
+
+    @GetMapping("{id}/latest")
+    public ResponseEntity<?> latestProjectUpdate(@PathVariable("id") int id) {
+        Optional<Project> projectOptional = projectRepository.findById(id);
+
+        if (projectOptional.isEmpty()) {
+            return ResponseEntity.ok().body(APIUtil.createErrorResponse("Project not found"));
+        }
+
+        Optional<Update> optionalUpdate = updateRepository.findFirstByProjectIdOrderByUploadedDesc(id);
+
+        if (optionalUpdate.isEmpty()) {
+            return ResponseEntity.ok().body(APIUtil.createErrorResponse("Update not found"));
+        }
+
+        Update update = optionalUpdate.get();
+
+        return ResponseEntity.ok().body(UpdateDto.create(update.getUploaded(), update.getDescription(), update.getTitle(), update.getFilename(), update.getVersions(), update.getSoftware(), update.getVersion(), update.getDownloads(), update.getStatus(), update.getId(), "http://localhost:8080/projects/" + id + "/updates/" + update.getId() + "/download"));
+    }
+
+    @GetMapping("{id}/updates")
+    public ResponseEntity<?> projectUpdates(@PathVariable("id") int id) {
+        List<UpdateDto> updateList = updateRepository.findAllByProjectId(id).stream().map(update -> UpdateDto.create(update.getUploaded(), update.getDescription(), update.getTitle(), update.getFilename(), update.getVersions(), update.getSoftware(), update.getVersion(), update.getDownloads(), update.getStatus(), update.getId(), "http://localhost:8080/projects/" + id + "/updates/" + update.getId() + "/download")).toList();
+        return ResponseEntity.ok().body(updateList);
     }
 
     //
