@@ -129,6 +129,25 @@ public class ResourceApiController {
         return ResponseEntity.ok().body(updateList);
     }
 
+    // TODO: make it so only updates under the certain project can be seen under it
+    @GetMapping("{id}/updates/{updateId}")
+    public ResponseEntity<?> update(@PathVariable("id") int id, @PathVariable("updateId") int updateId) {
+
+        Optional<Project> project = projectRepository.findById(id);
+        if (project.isEmpty()) {
+            return ResponseEntity.ok().body(APIUtil.createErrorResponse("Project not found"));
+        }
+
+        Optional<Update> optionalUpdate = updateRepository.findById(updateId);
+        if (optionalUpdate.isEmpty()) {
+            return ResponseEntity.ok().body(APIUtil.createErrorResponse("Update not found"));
+        }
+
+        Update update = optionalUpdate.get();
+
+        return ResponseEntity.ok().body(UpdateDto.create(update.getUploaded(), update.getDescription(), update.getTitle(), update.getFilename(), update.getVersions(), update.getSoftware(), update.getVersion(), update.getDownloads(), update.getStatus(), update.getId(), "http://localhost:8080/projects/" + id + "/updates/" + update.getId() + "/download"));
+    }
+
     //
     //  Admin area
     //
