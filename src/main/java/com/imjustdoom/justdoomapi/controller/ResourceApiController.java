@@ -17,7 +17,6 @@ import com.imjustdoom.justdoomapi.service.FileService;
 import com.imjustdoom.justdoomapi.util.APIUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -69,27 +67,6 @@ public class ResourceApiController {
         }
 
         return ResponseEntity.ok().body(ProjectDto.create(project.get().getTitle(), project.get().getBlurb(), project.get().getDescription(), project.get().getCreated(), updateRepository.findAllByProjectId(project.get().getId()), project.get().getId()));
-    }
-
-    @GetMapping("{id}/updates/{updateId}/download")
-    public ResponseEntity<?> downloadUpdate(@PathVariable("id") int id, @PathVariable("updateId") int updateId) {
-
-        Optional<Project> project = projectRepository.findById(id);
-        if (project.isEmpty()) {
-            return ResponseEntity.ok().body(APIUtil.createErrorResponse("Project not found"));
-        }
-
-        Optional<Update> update = updateRepository.findById(updateId);
-        if (update.isEmpty()) {
-            return ResponseEntity.ok().body(APIUtil.createErrorResponse("Update not found"));
-        }
-
-        String link = this.fileService.getDownload(updateId);
-        if (link == null) {
-            return ResponseEntity.ok().body(APIUtil.createErrorResponse("File not found"));
-        }
-
-        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(link)).build();
     }
 
     @GetMapping("{id}/title")
