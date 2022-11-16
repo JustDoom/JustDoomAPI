@@ -8,11 +8,14 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Integer> {
 
     List<Project> findAllByIsPublic(boolean isPublic);
+
+    Optional<Project> findBySlug(String slug);
 
     @Modifying
     @Transactional

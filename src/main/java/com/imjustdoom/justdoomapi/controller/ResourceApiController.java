@@ -56,15 +56,15 @@ public class ResourceApiController {
     public ResponseEntity<?> projects() {
         List<SimpleProjectDto> projectDtos = projectRepository.findAllByIsPublic(true).stream().map(blog -> {
             Optional<Update> latestUpdate = updateRepository.findFirstByProjectIdOrderByUploadedDesc(blog.getId());
-            return SimpleProjectDto.create(blog.getTitle(), blog.getBlurb(), latestUpdate.isEmpty() ? -1 : latestUpdate.get().getUploaded(), blog.getId());
+            return SimpleProjectDto.create(blog.getTitle(), blog.getBlurb(), blog.getSlug(), latestUpdate.isEmpty() ? -1 : latestUpdate.get().getUploaded(), blog.getId());
         }).collect(Collectors.toList());
         return ResponseEntity.ok().body(projectDtos);
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<?> project(@PathVariable("id") int id) {
-
-        Optional<Project> project = projectRepository.findById(id);
+    @GetMapping("{slug}")
+    public ResponseEntity<?> project(@PathVariable("slug") String slug) {
+        System.out.printf("slug: %s", slug);
+        Optional<Project> project = projectRepository.findBySlug(slug);
         if (project.isEmpty()) {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("Project not found"));
         }

@@ -7,11 +7,11 @@ import lombok.Getter;
 @AllArgsConstructor
 public class SimpleProjectDto {
 
-    public static SimpleProjectDto create(String title, String blurb, long updated, int id) {
-        return new SimpleProjectDto(title, blurb, updated, id);
+    public static SimpleProjectDto create(String title, String blurb, String slug, long updated, int id) {
+        return new SimpleProjectDto(title, blurb, slug, updated, id);
     }
 
-    private String title, blurb;
+    private String title, blurb, slug;
     private long updated;
     private int id;
 
