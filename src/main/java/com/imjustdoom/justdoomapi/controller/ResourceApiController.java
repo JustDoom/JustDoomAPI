@@ -96,20 +96,20 @@ public class ResourceApiController {
 
         Update update = optionalUpdate.get();
 
-        return ResponseEntity.ok().body(UpdateDto.create(update.getUploaded(), update.getDescription(), update.getTitle(), update.getFilename(), update.getVersions(), update.getSoftware(), update.getVersion(), update.getDownloads(), update.getStatus(), update.getId(), "http://localhost:8080/projects/" + id + "/updates/" + update.getId() + "/download"));
+        return ResponseEntity.ok().body(UpdateDto.create(update.getUploaded(), update.getDescription(), update.getTitle(), update.getFilename(), update.getVersions(), update.getSoftware(), update.getVersion(), update.getDownloads(), update.getStatus(), update.getId(), "http://localhost:8080/file/" + update.getId() + "/download"));
     }
 
     @GetMapping("{id}/updates")
     public ResponseEntity<?> projectUpdates(@PathVariable("id") int id) {
-        List<UpdateDto> updateList = updateRepository.findAllByProjectId(id).stream().map(update -> UpdateDto.create(update.getUploaded(), update.getDescription(), update.getTitle(), update.getFilename(), update.getVersions(), update.getSoftware(), update.getVersion(), update.getDownloads(), update.getStatus(), update.getId(), "http://localhost:8080/projects/" + id + "/updates/" + update.getId() + "/download")).toList();
+        List<UpdateDto> updateList = updateRepository.findAllByProjectId(id).stream().map(update -> UpdateDto.create(update.getUploaded(), update.getDescription(), update.getTitle(), update.getFilename(), update.getVersions(), update.getSoftware(), update.getVersion(), update.getDownloads(), update.getStatus(), update.getId(), "http://localhost:8080/file/" + update.getId() + "/download")).toList();
         return ResponseEntity.ok().body(updateList);
     }
 
     // TODO: make it so only updates under the certain project can be seen under it
-    @GetMapping("{id}/updates/{updateId}")
-    public ResponseEntity<?> update(@PathVariable("id") int id, @PathVariable("updateId") int updateId) {
+    @GetMapping("{slug}/updates/{updateId}")
+    public ResponseEntity<?> update(@PathVariable("slug") String slug, @PathVariable("updateId") int updateId) {
 
-        Optional<Project> project = projectRepository.findById(id);
+        Optional<Project> project = projectRepository.findBySlug(slug);
         if (project.isEmpty()) {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("Project not found"));
         }
@@ -121,7 +121,7 @@ public class ResourceApiController {
 
         Update update = optionalUpdate.get();
 
-        return ResponseEntity.ok().body(UpdateDto.create(update.getUploaded(), update.getDescription(), update.getTitle(), update.getFilename(), update.getVersions(), update.getSoftware(), update.getVersion(), update.getDownloads(), update.getStatus(), update.getId(), "http://localhost:8080/projects/" + id + "/updates/" + update.getId() + "/download"));
+        return ResponseEntity.ok().body(UpdateDto.create(update.getUploaded(), update.getDescription(), update.getTitle(), update.getFilename(), update.getVersions(), update.getSoftware(), update.getVersion(), update.getDownloads(), update.getStatus(), update.getId(), "http://localhost:8080/file/" + update.getId() + "/download"));
     }
 
     //
@@ -185,8 +185,8 @@ public class ResourceApiController {
         return ResponseEntity.ok().body(APIUtil.createSuccessResponse("Created a new project!"));
     }
 
-    @PostMapping("{id}/update")
-    public ResponseEntity<?> createProjectUpdate(@PathVariable("id") int id, @RequestHeader("authorization") String token, @RequestParam("file") MultipartFile file, @RequestPart("data") String data) {
+    @PostMapping("{slug}/update")
+    public ResponseEntity<?> createProjectUpdate(@PathVariable("slug") String slug, @RequestHeader("authorization") String token, @RequestParam("file") MultipartFile file, @RequestPart("data") String data) {
 
         ProjectCreateUpdateDto dto = new Gson().fromJson(data, ProjectCreateUpdateDto.class);
 
@@ -200,7 +200,7 @@ public class ResourceApiController {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not an admin"));
         }
 
-        Optional<Project> project = projectRepository.findById(id);
+        Optional<Project> project = projectRepository.findBySlug(slug);
         if (project.isEmpty()) {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("Project not found"));
         }
@@ -238,7 +238,7 @@ public class ResourceApiController {
         return ResponseEntity.ok().body(APIUtil.createSuccessResponse("Created a new project!"));
     }
 
-    @PostMapping("{id}/edit")
+    @PostMapping("{slug}/edit")
     public ResponseEntity<?> editProject(@RequestHeader("authorization") String token, @RequestBody ProjectEditDto dto) {
         if (tokenRepository.findByToken(token).isEmpty()) {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not logged in."));
@@ -250,7 +250,7 @@ public class ResourceApiController {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not an admin"));
         }
 
-        projectRepository.updateProjectById(dto.getTitle(), dto.getDescription(), dto.getBlurb(), dto.isPublic(), dto.getId());
+        projectRepository.updateProjectBySlug(dto.getTitle(), dto.getDescription(), dto.getBlurb(), dto.isPublic(), dto.getSlug());
 
         return ResponseEntity.ok().body(APIUtil.createSuccessResponse("Edit the project!"));
     }
