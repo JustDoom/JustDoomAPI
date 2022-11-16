@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class ProjectEditDto {
 
-    private int id;
+    private String slug;
     private String title, description, blurb;
     private boolean isPublic;
 }

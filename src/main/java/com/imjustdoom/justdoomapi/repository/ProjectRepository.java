@@ -21,4 +21,9 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
     @Transactional
     @Query("UPDATE Project project SET project.title = ?1, project.description = ?2, project.blurb = ?3, project.isPublic = ?4 WHERE project.id = ?5")
     void updateProjectById(String title, String description, String blurb, boolean isPublic, int id);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Project project SET project.title = ?1, project.description = ?2, project.blurb = ?3, project.isPublic = ?4 WHERE project.slug = ?5")
+    void updateProjectBySlug(String title, String description, String blurb, boolean isPublic, String slug);
 }
