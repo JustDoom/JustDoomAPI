@@ -63,7 +63,6 @@ public class ResourceApiController {
 
     @GetMapping("{slug}")
     public ResponseEntity<?> project(@PathVariable("slug") String slug) {
-        System.out.printf("slug: %s", slug);
         Optional<Project> project = projectRepository.findBySlug(slug);
         if (project.isEmpty()) {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("Project not found"));
