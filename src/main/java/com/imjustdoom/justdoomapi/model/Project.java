@@ -12,8 +12,9 @@ import java.util.List;
 @NoArgsConstructor
 public class Project {
 
-    public Project(String title, String description, String blurb, boolean isPublic, Account account) {
+    public Project(String title, String slug, String description, String blurb, boolean isPublic, Account account) {
         this.description = description;
+        this.slug = slug;
         this.blurb = blurb;
         this.account = account;
         this.created = System.currentTimeMillis();

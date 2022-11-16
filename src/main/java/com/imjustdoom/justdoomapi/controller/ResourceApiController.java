@@ -179,7 +179,7 @@ public class ResourceApiController {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not an admin"));
         }
 
-        Project blogPost = new Project(dto.getTitle(), dto.getDescription(), dto.getBlurb(), dto.isPublic(), account);
+        Project blogPost = new Project(dto.getTitle(), dto.getSlug(), dto.getDescription(), dto.getBlurb(), dto.isPublic(), account);
         projectRepository.save(blogPost);
 
         return ResponseEntity.ok().body(APIUtil.createSuccessResponse("Created a new project!"));
@@ -250,7 +250,7 @@ public class ResourceApiController {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not an admin"));
         }
 
-        projectRepository.updateProjectBySlug(dto.getTitle(), dto.getDescription(), dto.getBlurb(), dto.isPublic(), dto.getSlug());
+        projectRepository.updateProjectBySlug(dto.getTitle(), dto.getSlugupdate(), dto.getDescription(), dto.getBlurb(), dto.isPublic(), dto.getSlug());
 
         return ResponseEntity.ok().body(APIUtil.createSuccessResponse("Edit the project!"));
     }
