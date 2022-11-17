@@ -12,6 +12,9 @@ public class ValidationUtil {
     }
 
     public static boolean isUsernameValid(String username) {
+        if (username.length() < 2 || username.length() > 24) {
+            return false;
+        }
         return !USERNAME_PATTERN.matcher(username).find();
     }
 }
