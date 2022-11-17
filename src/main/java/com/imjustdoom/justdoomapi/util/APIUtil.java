@@ -9,4 +9,8 @@ public class APIUtil {
     public static String createSuccessResponse(String success) {
         return "{\"success\": \"" + success + "\"}";
     }
+
+    public static String downloadLink(int id) {
+        return "http://localhost:8080/file/" + id + "/download";
+    }
 }

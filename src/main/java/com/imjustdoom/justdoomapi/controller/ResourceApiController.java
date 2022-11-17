@@ -96,12 +96,12 @@ public class ResourceApiController {
 
         Update update = optionalUpdate.get();
 
-        return ResponseEntity.ok().body(UpdateDto.create(update.getUploaded(), update.getDescription(), update.getTitle(), update.getFilename(), update.getVersions(), update.getSoftware(), update.getVersion(), update.getDownloads(), update.getStatus(), update.getId(), "http://localhost:8080/file/" + update.getId() + "/download"));
+        return ResponseEntity.ok().body(UpdateDto.create(update.getUploaded(), update.getDescription(), update.getTitle(), update.getFilename(), update.getVersions(), update.getSoftware(), update.getVersion(), update.getDownloads(), update.getStatus(), update.getId(), APIUtil.downloadLink(update.getId())));
     }
 
     @GetMapping("{id}/updates")
     public ResponseEntity<?> projectUpdates(@PathVariable("id") int id) {
-        List<UpdateDto> updateList = updateRepository.findAllByProjectId(id).stream().map(update -> UpdateDto.create(update.getUploaded(), update.getDescription(), update.getTitle(), update.getFilename(), update.getVersions(), update.getSoftware(), update.getVersion(), update.getDownloads(), update.getStatus(), update.getId(), "http://localhost:8080/file/" + update.getId() + "/download")).toList();
+        List<UpdateDto> updateList = updateRepository.findAllByProjectId(id).stream().map(update -> UpdateDto.create(update.getUploaded(), update.getDescription(), update.getTitle(), update.getFilename(), update.getVersions(), update.getSoftware(), update.getVersion(), update.getDownloads(), update.getStatus(), update.getId(), APIUtil.downloadLink(update.getId()))).toList();
         return ResponseEntity.ok().body(updateList);
     }
 
@@ -121,7 +121,7 @@ public class ResourceApiController {
 
         Update update = optionalUpdate.get();
 
-        return ResponseEntity.ok().body(UpdateDto.create(update.getUploaded(), update.getDescription(), update.getTitle(), update.getFilename(), update.getVersions(), update.getSoftware(), update.getVersion(), update.getDownloads(), update.getStatus(), update.getId(), "http://localhost:8080/file/" + update.getId() + "/download"));
+        return ResponseEntity.ok().body(UpdateDto.create(update.getUploaded(), update.getDescription(), update.getTitle(), update.getFilename(), update.getVersions(), update.getSoftware(), update.getVersion(), update.getDownloads(), update.getStatus(), update.getId(), APIUtil.downloadLink(update.getId())));
     }
 
     //
