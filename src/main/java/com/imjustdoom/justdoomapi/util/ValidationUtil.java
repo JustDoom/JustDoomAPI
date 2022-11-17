@@ -17,4 +17,8 @@ public class ValidationUtil {
         }
         return !USERNAME_PATTERN.matcher(username).find();
     }
+
+    public static boolean isPasswordValid(String password) {
+        return password.length() >= 6 && password.length() <= 32;
+    }
 }

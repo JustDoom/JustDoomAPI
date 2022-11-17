@@ -79,6 +79,10 @@ public class AuthService implements UserDetailsService {
             return ResponseEntity.ok().body("{\"error\": \"Email is invalid\"}");
         }
 
+        if (!ValidationUtil.isPasswordValid(registerDto.getEmail())) {
+            return ResponseEntity.ok().body("{\"error\": \"Password is invalid\"}");
+        }
+
         // check if already exists
 
         Optional<Account> checkAccount = accountRepository.findByUsernameEqualsIgnoreCase(registerDto.getName());
