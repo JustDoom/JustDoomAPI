@@ -2,7 +2,7 @@ package com.imjustdoom.justdoomapi.service;
 
 import com.imjustdoom.justdoomapi.dto.in.LoginDto;
 import com.imjustdoom.justdoomapi.dto.in.RegisterDto;
-import com.imjustdoom.justdoomapi.dto.out.UserDto;
+import com.imjustdoom.justdoomapi.dto.out.MiddlewareUserDto;
 import com.imjustdoom.justdoomapi.model.Account;
 import com.imjustdoom.justdoomapi.model.Token;
 import com.imjustdoom.justdoomapi.repository.AccountRepository;
@@ -123,9 +123,9 @@ public class AuthService implements UserDetailsService {
             return ResponseEntity.ok().body("{\"error\": \"No such account by that token\"}");
         }
 
-        UserDto userDto = UserDto.create(cookieToken.get().getAccount().getUsername(), cookieToken.get().getAccount().getRole(), cookieToken.get().getAccount().getId());
+        MiddlewareUserDto middlewareUserDto = MiddlewareUserDto.create(cookieToken.get().getAccount().getUsername(), cookieToken.get().getAccount().getRole(), cookieToken.get().getAccount().getId());
 
-        return ResponseEntity.ok().body(userDto);
+        return ResponseEntity.ok().body(middlewareUserDto);
     }
 
     public boolean isAdmin(String token) {

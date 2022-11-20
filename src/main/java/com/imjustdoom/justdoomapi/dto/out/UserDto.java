@@ -7,10 +7,11 @@ import lombok.Getter;
 @AllArgsConstructor
 public class UserDto {
 
-    public static UserDto create(String username, String role, int id) {
-        return new UserDto(username, role, id);
+    public static UserDto create(String username, String role, long joined, int id) {
+        return new UserDto(username, role, joined, id);
     }
 
-    private String user, role;
+    private String username, role;
+    private long joined;
     private int id;
 }
