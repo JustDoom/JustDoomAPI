@@ -31,7 +31,7 @@ public class BlogController {
 
     @GetMapping
     public ResponseEntity<?> getBlogs() {
-        List<SimpleBlogDto> blogs = blogRepository.findAll().stream().map(blog -> SimpleBlogDto.create(blog.getTitle(), blog.getAccount().getUsername(), blog.getCreated(), blog.getId())).collect(Collectors.toList());
+        List<SimpleBlogDto> blogs = blogRepository.findAllByIsPublic(true).stream().map(blog -> SimpleBlogDto.create(blog.getTitle(), blog.getAccount().getUsername(), blog.getCreated(), blog.getId())).collect(Collectors.toList());
         Collections.reverse(blogRepository.findAll().stream().map(blog -> SimpleBlogDto.create(blog.getTitle(), blog.getAccount().getUsername(), blog.getCreated(), blog.getId())).collect(Collectors.toList()));
         return ResponseEntity.ok().body(blogs);
     }

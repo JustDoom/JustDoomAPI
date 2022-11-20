@@ -128,6 +128,20 @@ public class AuthService implements UserDetailsService {
         return ResponseEntity.ok().body(userDto);
     }
 
+    public boolean isAdmin(String token) {
+        if (token == null || token.equals("")) {
+            return false;
+        }
+
+        Optional<Token> cookieToken = tokenRepository.findByToken(token);
+
+        if (cookieToken.isEmpty()) {
+            return false;
+        }
+
+        return cookieToken.get().getAccount().getRole().equalsIgnoreCase("admin");
+    }
+
     public boolean doesAccountHaveAdminPermission(Account account) {
         return account.getRole().equals("ADMIN");
     }

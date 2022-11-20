@@ -40,6 +40,7 @@ public class ResourceApiController {
     private final ProjectRepository projectRepository;
     private final UpdateRepository updateRepository;
     private final TokenRepository tokenRepository;
+//    private final SlugHistoryRepository slugHistoryRepository;
 
     private final AuthService authService;
     private final FileService fileService;
@@ -249,6 +250,9 @@ public class ResourceApiController {
         if (!authService.doesAccountHaveAdminPermission(account)) {
             return ResponseEntity.ok().body(APIUtil.createErrorResponse("You are not an admin"));
         }
+
+//        SlugHistory slugHistory = new SlugHistory(dto.getSlug(), projectRepository.findBySlug(dto.getSlug()).get());
+//        slugHistoryRepository.save(slugHistory);
 
         projectRepository.updateProjectBySlug(dto.getTitle(), dto.getSlugupdate(), dto.getDescription(), dto.getBlurb(), dto.isPublic(), dto.getSlug());
 

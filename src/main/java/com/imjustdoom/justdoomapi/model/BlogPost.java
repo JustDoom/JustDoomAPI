@@ -31,6 +31,9 @@ public class BlogPost {
     @Column
     private String title;
 
+    @Column(nullable = false)
+    private boolean isPublic;
+
     @ManyToOne(cascade = CascadeType.ALL)
     private Account account;
 }
